@@ -12,7 +12,7 @@ import Home from "./components/TrelloCard/Home";
 
 import VerifyEmail from "./components/auth/VerifyEmail";
 import ForgotPassword from "./components/auth/ForgotPassword";
-import Profile from "./components/profile/Profile";
+import Profilee from "./components/profile/Profile";
 import Error from "./components/Error";
 import { connect } from "react-redux";
 
@@ -24,11 +24,11 @@ function App({ loggedIn, emailVerified }) {
     routes = (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/profile" component={Profilee} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
-        <Route path="/:boardID" component={TrelloBoard} />
         <Route path="/verify-email" component={VerifyEmail} />
-        <Route path="/profile" component={Profile} />
+        <Route path="/:boardID" component={TrelloBoard} />
         <Route path="/*" exact={true}>
           <div style={{ height: "100vh" }}>
             <Error />
@@ -40,17 +40,16 @@ function App({ loggedIn, emailVerified }) {
     console.log("test 2");
     routes = (
       <Switch>
+        <Route path="/" exact component={Home} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
-        <Route path="/" exact component={Home} />
         <Route path="/:boardID" component={TrelloBoard} />
-        <Route path="/profile" component={Profile} />
+        <Route path="/profile" component={Profilee} />
         <Route path="/*" exact={true}>
           <div style={{ height: "100vh" }}>
             <Error />
           </div>
         </Route>
-        <Redirect to="/" />
       </Switch>
     );
   } else {

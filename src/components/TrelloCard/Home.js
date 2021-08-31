@@ -60,12 +60,11 @@ const Home = ({ boards, dispatch, userID }) => {
   };
 
   const renderBoards = () => {
+    console.log(boards);
     if (boards) {
       return (
         boards &&
-        boards.map((bo) => {
-          const board = bo;
-
+        boards.map((board) => {
           return (
             <Link
               key={board.id}

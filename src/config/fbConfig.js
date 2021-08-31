@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
 
 // Replace this with your own config details
 var config = {
@@ -11,9 +11,11 @@ var config = {
   storageBucket: "ttmannagement.appspot.com",
   messagingSenderId: "823096567451",
   appId: "1:823096567451:web:c509234e258d1006fec83e",
-  measurementId: "G-YZY5CSMGEP"
+  measurementId: "G-YZY5CSMGEP",
 };
+
 firebase.initializeApp(config);
 firebase.firestore().settings({ timestampsInSnapshots: true });
+export const db = firebase.firestore();
 
-export default firebase 
+export default firebase;
