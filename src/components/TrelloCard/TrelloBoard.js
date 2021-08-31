@@ -50,13 +50,12 @@ class TrelloBoard extends PureComponent {
     if (!boards) {
       return <p>Board not found</p>;
     }
-    console.log(boards);
     return (
       <div>
         <Navbar />
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Link to="/">Go Back</Link>
-          <h2>{boards["0"].title}</h2>
+          <h2>{boards["0"].title && boards["0"].title}</h2>
           <Droppable droppableId="all-lists" direction="horizontal" type="list">
             {(provided) => (
               <ListsContainer

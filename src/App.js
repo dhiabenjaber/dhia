@@ -20,9 +20,12 @@ function App({ loggedIn, emailVerified }) {
   let routes;
   console.log(loggedIn, emailVerified);
   if (loggedIn && !emailVerified) {
+    console.log("test 1 ");
     routes = (
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/signin" component={SignIn} />
+        <Route path="/signup" component={SignUp} />
         <Route path="/:boardID" component={TrelloBoard} />
         <Route path="/verify-email" component={VerifyEmail} />
         <Route path="/profile" component={Profile} />
@@ -31,19 +34,23 @@ function App({ loggedIn, emailVerified }) {
             <Error />
           </div>
         </Route>
-        <Redirect to="/verify-email" />
       </Switch>
     );
   } else if (loggedIn && emailVerified) {
+    console.log("test 2");
     routes = (
       <Switch>
+        <Route path="/signin" component={SignIn} />
+        <Route path="/signup" component={SignUp} />
         <Route path="/" exact component={Home} />
         <Route path="/:boardID" component={TrelloBoard} />
+        <Route path="/profile" component={Profile} />
         <Route path="/*" exact={true}>
           <div style={{ height: "100vh" }}>
             <Error />
           </div>
         </Route>
+        <Redirect to="/" />
       </Switch>
     );
   } else {

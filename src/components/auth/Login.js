@@ -160,7 +160,7 @@ function SignInSide(props) {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
+  //console.log(state);
   return {
     emailVerified: state.firebase.auth.emailVerified,
     uid: state.firebase.auth.uid,

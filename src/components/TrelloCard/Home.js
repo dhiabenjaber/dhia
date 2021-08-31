@@ -68,7 +68,7 @@ const Home = ({ boards, dispatch, userID }) => {
 
           return (
             <Link
-              key={board.boardID}
+              key={board.id}
               to={`/${board.id}`}
               style={{ textDecoration: "none" }}
             >
@@ -108,7 +108,6 @@ const Home = ({ boards, dispatch, userID }) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state.firestore.ordered.Boards);
   return {
     userID: state.firebase.auth.uid,
     boards: state.firestore.ordered.Boards,
