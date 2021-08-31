@@ -4,22 +4,16 @@ const initialState = {
   "board-0": {
     id: "board-0",
     lists: ["list-0"],
-    title: "myboard"
-  }
+    title: "myboard",
+  },
 };
 
-const boardsReducer = (state = initialState, action) => {
+const boardsReducer = (state = {}, action) => {
   switch (action.type) {
-    case CONSTANTS.ADD_LIST: {
-      const { boardID, id } = action.payload;
-      const board = state[boardID];
-      const newListID = `list-${id}`;
-      const newLists = [...board.lists, newListID];
-      board.lists = newLists;
-      return { ...state, [boardID]: board };
-    }
+    case CONSTANTS.ADD_LIST:
+      return state;
 
-    case CONSTANTS.DRAG_HAPPENED: {
+    case CONSTANTS.DRAG_HAPPENED:
       const { boardID } = action.payload;
       const board = state[boardID];
       const lists = board.lists;
@@ -27,7 +21,7 @@ const boardsReducer = (state = initialState, action) => {
         droppableIndexEnd,
         droppableIndexStart,
 
-        type
+        type,
       } = action.payload;
 
       // draggin lists around
@@ -39,27 +33,13 @@ const boardsReducer = (state = initialState, action) => {
         return { ...state, [boardID]: board };
       }
       return state;
-    }
-    case CONSTANTS.DELETE_LIST: {
-      const { listID, boardID } = action.payload;
-      const board = state[boardID];
-      const lists = board.lists;
-      const newLists = lists.filter(id => id !== listID);
-      board.lists = newLists;
-      return { ...state, [boardID]: board };
-    }
 
-    case CONSTANTS.ADD_BOARD: {
-      const { title, id } = action.payload;
-      const newID = `board-${id}`;
-      const newBoard = {
-        id: newID,
-        title,
-        lists: []
-      };
+    case CONSTANTS.DELETE_LIST:
+      console.log("REMOVE_PRODUCT");
+      return state;
 
-      return { ...state, [newID]: newBoard };
-    }
+    case CONSTANTS.ADD_BOARD:
+      return state;
 
     default:
       return state;

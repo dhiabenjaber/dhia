@@ -5,24 +5,14 @@ const initialState = {
     id: "list-0",
     cards: ["card-0"],
     title: "myList",
-    board: "board-0"
-  }
+    board: "board-0",
+  },
 };
 
 const listsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case CONSTANTS.ADD_LIST: {
-      const { title, id } = action.payload;
-      const newList = {
-        title: title,
-        id: `list-${id}`,
-        cards: []
-      };
-
-      const newState = { ...state, [`list-${id}`]: newList };
-
-      return newState;
-    }
+    case CONSTANTS.ADD_LIST:
+      return state;
 
     case CONSTANTS.ADD_CARD: {
       const { listID, id } = action.payload;
@@ -38,7 +28,7 @@ const listsReducer = (state = initialState, action) => {
         droppableIndexEnd,
         droppableIndexStart,
 
-        type
+        type,
       } = action.payload;
 
       // draggin lists around - the listOrderReducer should handle this
@@ -68,34 +58,16 @@ const listsReducer = (state = initialState, action) => {
         return {
           ...state,
           [droppableIdStart]: listStart,
-          [droppableIdEnd]: listEnd
+          [droppableIdEnd]: listEnd,
         };
       }
       return state;
 
-    case CONSTANTS.DELETE_CARD: {
-      const { listID, id } = action.payload;
+    case CONSTANTS.EDIT_LIST_TITLE:
+      return state;
 
-      const list = state[listID];
-      const newCards = list.cards.filter(cardID => cardID !== id);
-
-      return { ...state, [listID]: { ...list, cards: newCards } };
-    }
-
-    case CONSTANTS.EDIT_LIST_TITLE: {
-      const { listID, newTitle } = action.payload;
-
-      const list = state[listID];
-      list.title = newTitle;
-      return { ...state, [listID]: list };
-    }
-
-    case CONSTANTS.DELETE_LIST: {
-      const { listID } = action.payload;
-      const newState = state;
-      delete newState[listID];
-      return newState;
-    }
+    case CONSTANTS.DELETE_LIST:
+      return state;
 
     default:
       return state;

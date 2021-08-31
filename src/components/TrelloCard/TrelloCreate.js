@@ -10,50 +10,51 @@ import TrelloOpenForm from "./TrelloOpenForm";
 class TrelloCreate extends React.PureComponent {
   state = {
     formOpen: false,
-    text: ""
+    text: "",
   };
 
   openForm = () => {
     this.setState({
-      formOpen: true
+      formOpen: true,
     });
   };
 
-  closeForm = e => {
+  closeForm = (e) => {
     this.setState({
-      formOpen: false
+      formOpen: false,
     });
   };
 
-  handleInputChange = e => {
+  handleInputChange = (e) => {
     this.setState({
-      text: e.target.value
+      text: e.target.value,
     });
   };
 
   handleAddList = () => {
-    const { dispatch } = this.props;
+    const { addList, boardID } = this.props;
     const { text } = this.state;
+    console.log(text);
 
     if (text) {
       this.setState({
-        text: ""
+        text: "",
       });
-      dispatch(addList(text));
+      addList({ text, boardID });
     }
 
     return;
   };
 
   handleAddCard = () => {
-    const { dispatch, listID } = this.props;
+    const { addCard, boardID, listID } = this.props;
     const { text } = this.state;
 
     if (text) {
       this.setState({
-        text: ""
+        text: "",
       });
-      dispatch(addCard(listID, text));
+      addCard({ listID, text, boardID });
     }
   };
 
@@ -108,5 +109,10 @@ class TrelloCreate extends React.PureComponent {
     );
   }
 }
-
-export default connect()(TrelloCreate);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addList: (list) => dispatch(addList(list)),
+    addCard: (card) => dispatch(addCard(card)),
+  };
+};
+export default connect(null, mapDispatchToProps)(TrelloCreate);

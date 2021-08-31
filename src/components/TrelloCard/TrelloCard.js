@@ -47,70 +47,80 @@ const DeleteButton = styled(Icon)`
   }
 `;
 
-const TrelloCard = React.memo(({ text, id, listID, index, dispatch }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [cardText, setText] = useState(text);
+const TrelloCard = React.memo(
+  ({ deleteCard, editCard, text, id, listID, index, boardID }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [cardText, setText] = useState(text);
 
-  const closeForm = e => {
-    setIsEditing(false);
+    const closeForm = (e) => {
+      setIsEditing(false);
+    };
+
+    const handleChange = (e) => {
+      setText(e.target.value);
+    };
+
+    const saveCard = (e) => {
+      e.preventDefault();
+
+      editCard({ id, listID, cardText, boardID });
+      setIsEditing(false);
+    };
+
+    const handleDeleteCard = (e) => {
+      deleteCard({ id, listID, boardID });
+    };
+
+    const renderEditForm = () => {
+      return (
+        <TrelloForm
+          text={cardText}
+          onChange={handleChange}
+          closeForm={closeForm}
+        >
+          <TrelloButton onClick={saveCard}>Save</TrelloButton>
+        </TrelloForm>
+      );
+    };
+
+    const renderCard = () => {
+      return (
+        <Draggable draggableId={String(id)} index={index}>
+          {(provided) => (
+            <CardContainer
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+              ref={provided.innerRef}
+              onDoubleClick={() => setIsEditing(true)}
+            >
+              <Card>
+                <EditButton
+                  onMouseDown={() => setIsEditing(true)}
+                  fontSize="small"
+                >
+                  edit
+                </EditButton>
+                <DeleteButton fontSize="small" onMouseDown={handleDeleteCard}>
+                  delete
+                </DeleteButton>
+
+                <CardContent>
+                  <Typography>{text}</Typography>
+                </CardContent>
+              </Card>
+            </CardContainer>
+          )}
+        </Draggable>
+      );
+    };
+
+    return isEditing ? renderEditForm() : renderCard();
+  }
+);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    editCard: (card) => dispatch(editCard(card)),
+    deleteCard: (card) => dispatch(deleteCard(card)),
   };
-
-  const handleChange = e => {
-    setText(e.target.value);
-  };
-
-  const saveCard = e => {
-    e.preventDefault();
-
-    dispatch(editCard(id, listID, cardText));
-    setIsEditing(false);
-  };
-
-  const handleDeleteCard = e => {
-    console.log(listID);
-    dispatch(deleteCard(id, listID));
-  };
-
-  const renderEditForm = () => {
-    return (
-      <TrelloForm text={cardText} onChange={handleChange} closeForm={closeForm}>
-        <TrelloButton onClick={saveCard}>Save</TrelloButton>
-      </TrelloForm>
-    );
-  };
-
-  const renderCard = () => {
-    return (
-      <Draggable draggableId={String(id)} index={index}>
-        {provided => (
-          <CardContainer
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
-            onDoubleClick={() => setIsEditing(true)}
-          >
-            <Card>
-              <EditButton
-                onMouseDown={() => setIsEditing(true)}
-                fontSize="small"
-              >
-                edit
-              </EditButton>
-              <DeleteButton fontSize="small" onMouseDown={handleDeleteCard}>
-                delete
-              </DeleteButton>
-
-              <CardContent>
-                <Typography>{text}</Typography>
-              </CardContent>
-            </Card>
-          </CardContainer>
-        )}
-      </Draggable>
-    );
-  };
-
-  return isEditing ? renderEditForm() : renderCard();
-});
-
-export default connect()(TrelloCard);
+};
+export default connect(null, mapDispatchToProps)(TrelloCard);

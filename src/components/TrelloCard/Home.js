@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { addBoard } from "../actions";
+import { compose } from "redux";
+import { firestoreConnect } from "react-redux-firebase";
+import { addBoard } from "../../store/actions";
+import Navbar from "../../components/layout/Navbar";
 import BoardThumbnail from "./BoardThumbnail";
 
 const Thumbnails = styled.div`
@@ -42,34 +45,41 @@ const CreateInput = styled.input`
   align-self: center;
 `;
 
-const Home = ({ boards, boardOrder, dispatch }) => {
+const Home = ({ boards, dispatch, userID }) => {
   // this is the home site that shows you your boards and you can also create a Board here.
 
   const [newBoardTitle, setNewBoardTitle] = useState("");
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setNewBoardTitle(e.target.value);
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(addBoard(newBoardTitle));
   };
 
   const renderBoards = () => {
-    return boardOrder.map(boardID => {
-      const board = boards[boardID];
-
+    if (boards) {
       return (
-        <Link
-          key={boardID}
-          to={`/${board.id}`}
-          style={{ textDecoration: "none" }}
-        >
-          <BoardThumbnail {...board} />
-        </Link>
+        boards &&
+        boards.map((bo) => {
+          const board = bo;
+
+          return (
+            <Link
+              key={board.boardID}
+              to={`/${board.id}`}
+              style={{ textDecoration: "none" }}
+            >
+              <BoardThumbnail title={board.title} />
+            </Link>
+          );
+        })
       );
-    });
+    } else {
+      return;
+    }
   };
 
   const renderCreateBoard = () => {
@@ -87,16 +97,30 @@ const Home = ({ boards, boardOrder, dispatch }) => {
   };
 
   return (
-    <HomeContainer>
-      <Thumbnails>{renderBoards()}</Thumbnails>
-      {renderCreateBoard()}
-    </HomeContainer>
+    <div>
+      <Navbar />
+      <HomeContainer>
+        <Thumbnails>{renderBoards()}</Thumbnails>
+        {renderCreateBoard()}
+      </HomeContainer>
+    </div>
   );
 };
 
-const mapStateToProps = state => ({
-  boards: state.boards,
-  boardOrder: state.boardOrder
-});
+const mapStateToProps = (state) => {
+  console.log(state.firestore.ordered.Boards);
+  return {
+    userID: state.firebase.auth.uid,
+    boards: state.firestore.ordered.Boards,
+  };
+};
 
-export default connect(mapStateToProps)(Home);
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect((props) => [
+    {
+      collection: "Boards",
+      where: ["userID", "==", props.userID],
+    },
+  ])
+)(Home);

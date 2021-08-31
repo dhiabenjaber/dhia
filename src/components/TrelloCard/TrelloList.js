@@ -4,7 +4,9 @@ import TrelloCreate from "./TrelloCreate";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import styled from "styled-components";
 import { connect } from "react-redux";
-import { editTitle, deleteList } from "../../store/actions";
+import { compose } from "redux";
+import { firestoreConnect } from "react-redux-firebase";
+import { editTitle, deleteList } from "../../store/actions/listsActions";
 import Icon from "@material-ui/core/Icon";
 
 const ListContainer = styled.div`
@@ -50,10 +52,17 @@ const ListTitle = styled.h4`
   }
 `;
 
-const TrelloList = ({ title, cards, listID, index, dispatch }) => {
+const TrelloList = ({
+  title,
+  cards,
+  listID,
+  index,
+  deleteList,
+  editTitle,
+  boardID,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [listTitle, setListTitle] = useState(title);
-
   const renderEditInput = () => {
     return (
       <form onSubmit={handleFinishEditing}>
@@ -69,34 +78,34 @@ const TrelloList = ({ title, cards, listID, index, dispatch }) => {
     );
   };
 
-  const handleFocus = e => {
+  const handleFocus = (e) => {
     e.target.select();
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     e.preventDefault();
     setListTitle(e.target.value);
   };
 
-  const handleFinishEditing = e => {
+  const handleFinishEditing = (e) => {
     setIsEditing(false);
-    dispatch(editTitle(listID, listTitle));
+    editTitle({ listID, listTitle, boardID });
   };
 
   const handleDeleteList = () => {
-    dispatch(deleteList(listID));
+    deleteList({ listID, boardID });
   };
 
   return (
     <Draggable draggableId={String(listID)} index={index}>
-      {provided => (
+      {(provided) => (
         <ListContainer
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
         >
           <Droppable droppableId={String(listID)} type="card">
-            {provided => (
+            {(provided) => (
               <div>
                 <div>
                   {isEditing ? (
@@ -111,17 +120,21 @@ const TrelloList = ({ title, cards, listID, index, dispatch }) => {
                   )}
                 </div>
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {cards.map((card, index) => (
-                    <TrelloCard
-                      key={card.id}
-                      text={card.text}
-                      id={card.id}
-                      index={index}
-                      listID={listID}
-                    />
-                  ))}
+                  {cards[`Boards/${boardID}/lists/${listID}/Cards`] &&
+                    cards[`Boards/${boardID}/lists/${listID}/Cards`].map(
+                      (card, index) => (
+                        <TrelloCard
+                          key={card.id}
+                          text={card.text}
+                          id={card.id}
+                          index={index}
+                          listID={listID}
+                          boardID={boardID}
+                        />
+                      )
+                    )}
                   {provided.placeholder}
-                  <TrelloCreate listID={listID} />
+                  <TrelloCreate listID={listID} boardID={boardID} />
                 </div>
               </div>
             )}
@@ -131,5 +144,26 @@ const TrelloList = ({ title, cards, listID, index, dispatch }) => {
     </Draggable>
   );
 };
-
-export default connect()(TrelloList);
+const mapStateToProps = (state) => {
+  return {
+    cards: state.firestore.ordered,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    editTitle: (list) => dispatch(editTitle(list)),
+    deleteList: (list) => dispatch(deleteList(list)),
+  };
+};
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  firestoreConnect((props) => [
+    {
+      collection: "Boards",
+      where: ["BoardID", "==", props.boardID],
+    },
+    {
+      collection: `Boards/${props.boardID}/lists/${props.listID}/Cards`,
+    },
+  ])
+)(TrelloList);
