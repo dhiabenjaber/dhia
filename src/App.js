@@ -58,6 +58,7 @@ function App({ loggedIn, emailVerified }) {
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
         <Route path="/forgot-password" component={ForgotPassword} />
+        <Redirect to="signin" />
       </Switch>
     );
   }

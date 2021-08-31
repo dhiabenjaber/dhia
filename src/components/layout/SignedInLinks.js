@@ -17,10 +17,6 @@ const SignedInLinks = (props) => {
       <Button color="inherit" onClick={props.logOut}>
         Log Out
       </Button>
-
-      <NavLink to="/" className="btn btn-floating pink lighten-1">
-        SY
-      </NavLink>
     </>
   );
 };

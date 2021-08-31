@@ -108,7 +108,7 @@ const AccountProfileDetails = (props) => {
       subscriber();
     };
   }, [loading]);
-
+  console.log(state);
   async function updateProfile() {
     await db.collection("users").doc(props.auth.uid).set({
       firstName: firstName,
